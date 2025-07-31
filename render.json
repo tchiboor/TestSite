@@ -1,0 +1,10 @@
+
+{
+  "routes": [
+    {
+      "path": "/*",
+      "method": ["GET"],
+      "dest": "/receiver.html"
+    }
+  ]
+}
