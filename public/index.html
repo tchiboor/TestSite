@@ -1,43 +1,74 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TURN PoC Receiver</title>
+  <meta charset="utf-8">
+  <title>TURN Open Relay PoC (Browser Sender)</title>
 </head>
 <body>
-  <h3>TURN PoC Receiver</h3>
-  <textarea id="sdp" rows="20" cols="100" placeholder="Paste SDP offer here"></textarea><br>
-  <button onclick="start()">Respond</button>
+  <h2>TURN Open Relay PoC - Browser Sender</h2>
+  <p>1. Paste the offer from the receiver.py script below.<br>
+     2. Click "Create Answer".<br>
+     3. Copy the answer to the receiver terminal.<br>
+     4. Click "Send Message" to prove relay.</p>
+  <textarea id="offer" cols="100" rows="10" placeholder="Paste offer here"></textarea><br>
+  <button onclick="createAnswer()">Create Answer</button><br><br>
+  <textarea id="answer" cols="100" rows="10" placeholder="Copy this answer to receiver"></textarea><br>
+  <input id="msg" value="Hello from browser! TURN is an open relay."><br>
+  <button onclick="sendMessage()" id="sendBtn" disabled>Send Message</button>
   <pre id="log"></pre>
-  <script>
-    let pc = new RTCPeerConnection({
-      iceServers: [{urls: ['stun:stun.l.google.com:19302']}]
-    });
+<script>
+let pc, channel;
 
-    pc.ondatachannel = event => {
-      const channel = event.channel;
-      channel.onmessage = msg => {
-        log("Received: " + msg.data);
-        if (msg.data === "ping") {
-          channel.send("pong");
-        } else if (msg.data === "GET / HTTP/1.1\r\n\r\n") {
-          channel.send("HTTP/1.1 200 OK\r\nContent-Length: 9\r\n\r\nIt works!");
-        }
-      };
+async function createAnswer() {
+  document.getElementById('log').textContent = "Creating peer connection...";
+  let offer = JSON.parse(document.getElementById('offer').value);
+  pc = new RTCPeerConnection({
+    iceServers: [{
+      urls: 'turn:test.kmp.sn:3478?transport=udp',
+      username: '1754040322:@tchiboor:test.kmp.sn',
+      credential: 'y41rZbvm7t6Wk+BvPIKnrd2uAmY='
+    }]
+  });
+
+  pc.ondatachannel = event => {
+    channel = event.channel;
+    channel.onopen = () => {
+      document.getElementById('log').textContent += "\n[+] DataChannel open!";
+      document.getElementById('sendBtn').disabled = false;
     };
+    channel.onclose = () => {
+      document.getElementById('log').textContent += "\n[-] DataChannel closed.";
+    };
+    channel.onmessage = e => {
+      document.getElementById('log').textContent += "\n[Browser RECEIVED]: " + e.data;
+    };
+  };
 
-    async function start() {
-      let offer = JSON.parse(document.getElementById("sdp").value);
-      await pc.setRemoteDescription(offer);
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      log("Paste this answer into your script:");
-      log(JSON.stringify(pc.localDescription));
-    }
+  await pc.setRemoteDescription(offer);
+  let answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer);
 
-    function log(msg) {
-      document.getElementById("log").innerText += msg + "\n";
-    }
-  </script>
+  // Wait for ICE gathering
+  await new Promise(resolve => {
+    if (pc.iceGatheringState === "complete") return resolve();
+    pc.onicegatheringstatechange = () => {
+      if (pc.iceGatheringState === "complete") resolve();
+    };
+  });
+
+  document.getElementById('answer').value = JSON.stringify(pc.localDescription);
+  document.getElementById('log').textContent += "\n[+] Answer created. Paste this to receiver.py.";
+}
+
+function sendMessage() {
+  let msg = document.getElementById('msg').value;
+  if (channel && channel.readyState === "open") {
+    channel.send(msg);
+    document.getElementById('log').textContent += "\n[Sent] " + msg;
+  } else {
+    document.getElementById('log').textContent += "\n[-] Channel not open!";
+  }
+}
+</script>
 </body>
 </html>
