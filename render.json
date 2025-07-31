@@ -1,10 +1,4 @@
-
 {
-  "routes": [
-    {
-      "path": "/*",
-      "method": ["GET"],
-      "dest": "public/receiver.html"
-    }
-  ]
+  "buildCommand": "",
+  "publish": "public"
 }
