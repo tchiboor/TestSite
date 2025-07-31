@@ -27,7 +27,8 @@ async function createOffer() {
       urls: 'turn:test.kmp.sn:3478?transport=udp',
       username: '1754040322:@tchiboor:test.kmp.sn',
       credential: 'y41rZbvm7t6Wk+BvPIKnrd2uAmY='
-    }]
+    }],
+    iceTransportPolicy: 'relay'
   });
   channel = pc.createDataChannel("relay-test");
   channel.onopen = () => {
