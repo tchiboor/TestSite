@@ -1,0 +1,7 @@
+services:
+  - type: static
+    name: trevor-portfolio
+    env: static
+    buildCommand: ""              # no build step for plain HTML
+    staticPublishPath: public     # serve from /public
+    pullRequestPreviewsEnabled: true
