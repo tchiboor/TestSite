@@ -1,43 +1,368 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>TURN PoC Receiver</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trevor Henry | Offensive Security · Threat Intel · Blue Team</title>
+  <meta name="description" content="Portfolio of Trevor Henry – security researcher, pentester, and SOC builder. TURN abuse PoCs, e‑gov 2025 research, MISP/CAPEv2, Elastic/Kibana, and more." />
+  <meta name="theme-color" content="#00ff88" />
+  <style>
+    :root{
+      --bg:#0b0f10;          /* deep graphite */
+      --panel:#0f1416;       /* card bg */
+      --text:#d7ffef;        /* minty white */
+      --muted:#7de0bc;       /* soft green */
+      --accent:#00ff88;      /* neon */
+      --accent-2:#00c7ff;    /* cyan */
+      --danger:#ff4d6d;      /* pink-red */
+      --ok:#68ff7a;          /* lime */
+      --shadow: 0 10px 30px rgba(0,255,136,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font:16px/1.6 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      color:var(--text); background:radial-gradient(1200px 800px at 80% -10%, rgba(0,255,136,.08), transparent),
+                          radial-gradient(800px 600px at 10% 110%, rgba(0,199,255,.08), transparent),
+                          var(--bg);
+      overflow-x:hidden;
+    }
+    /* matrix rain backdrop */
+    #matrix{position:fixed; inset:0; z-index:-1; filter:opacity(.18) blur(.5px)}
+
+    a{color:var(--accent); text-decoration:none}
+    a:hover{filter:brightness(115%)}
+
+    .container{max-width:1100px; margin:0 auto; padding:24px}
+    header{position:sticky; top:0; backdrop-filter: blur(8px); background:linear-gradient(180deg, rgba(11,15,16,.7), rgba(11,15,16,0)); z-index:5; border-bottom:1px solid rgba(0,255,136,.1)}
+    .brand{display:flex; align-items:center; gap:14px}
+    .logo{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:var(--shadow)}
+    .brand h1{font-size:18px; margin:0; letter-spacing:.6px}
+
+    nav{display:flex; gap:14px; flex-wrap:wrap}
+    .navwrap{display:flex; align-items:center; justify-content:space-between; gap:18px}
+    .chip{padding:8px 12px; border:1px solid rgba(0,255,136,.25); border-radius:999px; color:var(--muted); cursor:pointer}
+    .chip:hover{border-color:var(--accent); color:var(--text)}
+
+    /* hero */
+    .hero{display:grid; grid-template-columns:1.2fr .8fr; gap:28px; align-items:center; padding:44px 0}
+    .terminal{background:var(--panel); border:1px solid rgba(0,255,136,.15); border-radius:20px; box-shadow:var(--shadow); overflow:hidden}
+    .term-top{display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.06); background:linear-gradient(0deg, rgba(255,255,255,.03), rgba(255,255,255,0))}
+    .dot{width:10px; height:10px; border-radius:50%}
+    .d-red{background:#ff5f56}.d-yellow{background:#ffbd2e}.d-green{background:#27c93f}
+    .term-body{padding:18px; color:#b9fdd1; min-height:160px; white-space:pre-line}
+
+    .title{font-size:44px; line-height:1.15; margin:0 0 10px; letter-spacing:.5px}
+    .subtitle{color:var(--muted); margin:0 0 18px}
+    .kpi{display:flex; gap:16px; flex-wrap:wrap}
+    .badge{padding:6px 10px; border:1px dashed rgba(0,255,136,.25); border-radius:10px; font-size:13px; color:var(--muted)}
+
+    /* grids */
+    .grid{display:grid; gap:18px}
+    .grid.cards{grid-template-columns:repeat(auto-fit, minmax(260px,1fr))}
+    .card{background:rgba(255,255,255,.02); border:1px solid rgba(0,255,136,.12); border-radius:20px; padding:18px; box-shadow:var(--shadow)}
+    .card h3{margin:4px 0 6px; font-size:18px}
+    .card p{margin:0; color:#a8e9cc}
+    .card small{color:#89d9c0}
+
+    /* sections */
+    section{padding:28px 0}
+    section h2{font-size:22px; color:var(--accent); margin:0 0 12px}
+    .mono{font-family:inherit}
+
+    /* footer */
+    footer{border-top:1px solid rgba(0,255,136,.1); margin-top:24px; padding:22px 0; color:#a8e9cc}
+
+    /* responsive */
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr}
+    }
+
+    /* fun details */
+    .glow{box-shadow:0 0 0 1px rgba(0,255,136,.25), 0 0 18px rgba(0,255,136,.08) inset}
+    .btn{display:inline-flex; gap:8px; align-items:center; border:1px solid rgba(0,255,136,.3); border-radius:12px; padding:10px 14px; color:var(--text); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)); cursor:pointer}
+    .btn:hover{border-color:var(--accent)}
+    .row{display:flex; gap:12px; flex-wrap:wrap}
+
+    /* command prompt */
+    .prompt{color:#b9fdd1}
+    .caret{display:inline-block; width:10px; background:var(--accent); height:1.1em; vertical-align:text-bottom; animation:blink 1s steps(1) infinite}
+    @keyframes blink{50%{opacity:0}}
+
+    /* timeline */
+    .timeline{border-left:2px dashed rgba(0,255,136,.25); padding-left:14px}
+    .timeline .item{margin-bottom:12px}
+    .timeline .item::marker{color:var(--accent)}
+
+    .callout{border:1px dashed rgba(0,255,136,.35); border-radius:16px; padding:12px}
+  </style>
 </head>
 <body>
-  <h3>TURN PoC Receiver</h3>
-  <textarea id="sdp" rows="20" cols="100" placeholder="Paste SDP offer here"></textarea><br>
-  <button onclick="start()">Respond</button>
-  <pre id="log"></pre>
+  <canvas id="matrix" aria-hidden="true"></canvas>
+  <header>
+    <div class="container navwrap">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <h1>trevor@henry:~/portfolio<span class="caret" style="height:1em"></span></h1>
+      </div>
+      <nav id="nav">
+        <span class="chip" data-goto="#about">about</span>
+        <span class="chip" data-goto="#skills">skills</span>
+        <span class="chip" data-goto="#projects">projects</span>
+        <span class="chip" data-goto="#reports">reports</span>
+        <span class="chip" data-goto="#contact">contact</span>
+        <a class="chip" href="#" id="downloadCV">download-cv.sh</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <h2 class="subtitle">Security Researcher · Pentester · Threat Intel</h2>
+        <h1 class="title">Hi, I'm Trevor Henry.<br/>I break things to make them safer.</h1>
+        <div class="kpi">
+          <span class="badge">E‑Gov 2025 Research</span>
+          <span class="badge">TURN Abuse PoCs</span>
+          <span class="badge">MISP + CAPEv2</span>
+          <span class="badge">Elastic/Kibana</span>
+          <span class="badge">Matrix/Synapse</span>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <a class="btn" href="#projects">$ ls projects/</a>
+          <a class="btn" href="#contact">$ echo "let's talk" &gt; /dev/email</a>
+        </div>
+      </div>
+      <div class="terminal glow" aria-label="animated terminal">
+        <div class="term-top">
+          <span class="dot d-red"></span>
+          <span class="dot d-yellow"></span>
+          <span class="dot d-green"></span>
+          <span style="margin-left:8px;color:#a8e9cc">/bin/intro.sh</span>
+        </div>
+        <div class="term-body" id="term">
+$ whoami
+&gt; trevor_henry
+$ uname -a
+&gt; offensive-security linux x86_64 #1337 SMP PREEMPT_DYNAMIC
+$ cat mission.txt
+&gt; defend users, dismantle fraud, raise the bar.
+$ 
+<span class="caret"></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <h2>$ cat about.md</h2>
+      <div class="card">
+        <p>
+          I'm a hands-on security researcher focused on web app VAPT, blue-team engineering, and threat intelligence. Recent work includes a continent‑wide assessment of African e‑government services (exposed tech, CVEs, CMS footprints), TURN abuse proof‑of‑concepts, and SOC integrations (MISP ⇆ CAPEv2, Elastic/Kibana).
+        </p>
+        <p class="callout">Currently: preparing for MS Cybersecurity (NJIT) and delivering impact‑driven VAPT reports.</p>
+      </div>
+    </section>
+
+    <section id="skills">
+      <h2>$ cat skills.txt</h2>
+      <div class="grid cards">
+        <div class="card">
+          <h3>Offensive</h3>
+          <p>nuclei, httpx/whatweb, gobuster, nmap, Burp, SSRF/IDOR/logic bugs, auth bypass, token tampering.</p>
+          <small>PoCs &amp; reproducible scripts preferred.</small>
+        </div>
+        <div class="card">
+          <h3>Blue Team</h3>
+          <p>MISP, CAPEv2 malware pipeline, honeypots (Cowrie, OpenCanary), Elastic/Kibana, alerting with IOCs.</p>
+          <small>Dashboards, decoders, parsers, automation.</small>
+        </div>
+        <div class="card">
+          <h3>Infra &amp; Dev</h3>
+          <p>Linux, Docker, Kubernetes (EKS), Python, Bash, GitOps, CI for scans, static site reporting.</p>
+          <small>Clean code, clean reports.</small>
+        </div>
+        <div class="card">
+          <h3>Research</h3>
+          <p>Large‑scale CVE enrichment (NVD/Vulners/Repology), tech/version normalization, data viz &amp; metrics.</p>
+          <small>CSV/JSON/XLSX publishers.</small>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <h2>$ ls projects/ -al</h2>
+      <div class="grid cards">
+        <div class="card">
+          <h3>TURN Abuse PoC</h3>
+          <p>Showed TURN misuse for proxying and internal access; headless exfiltration via WebRTC data channels.</p>
+          <small>aiortc, browser peer, covert file transfer.</small>
+        </div>
+        <div class="card">
+          <h3>Matrix/Synapse VAPT</h3>
+          <p>Federation attacks, key extraction tests, API fuzzing, TURN leakage checks for self‑hosted Matrix.</p>
+          <small>Scripts + checklists for repeatable audits.</small>
+        </div>
+        <div class="card">
+          <h3>E‑Gov 2025 Scanner</h3>
+          <p>HTTPX + WhatWeb merge; CVE lookup (NVD/Vulners), version aging, continent/country rollups.</p>
+          <small>Exports: JSON, CSV, XLSX, charts.</small>
+        </div>
+        <div class="card">
+          <h3>SOC Pipeline</h3>
+          <p>Honeypot → CAPEv2 → MISP → Elastic correlation; tagging, sightings, and IOC‑driven alerts.</p>
+          <small>Playbooks &amp; dashboards.</small>
+        </div>
+      </div>
+    </section>
+
+    <section id="reports">
+      <h2>$ tail -n 5 reports.log</h2>
+      <div class="grid cards">
+        <div class="card">
+          <h3>VAPT: apps.koparexpress.org</h3>
+          <p>Findings: PII exposure, weak token validation, backend input issues. Scope limited pre‑payment only.</p>
+          <small>Risk: High · Fraud/Privacy impact.</small>
+        </div>
+        <div class="card">
+          <h3>Africa CVE Rollup</h3>
+          <p>~32k CVEs, thousands of domains across 54 countries. Severity trend reporting, CMS exposure stats.</p>
+          <small>Actionable prioritization lists.</small>
+        </div>
+        <div class="card">
+          <h3>Honeypot Telemetry</h3>
+          <p>Credential spraying and basic malware distribution via telnet/ssh; automated sample triage paths.</p>
+          <small>Feeds into MISP galaxies.</small>
+        </div>
+      </div>
+      <p class="callout">Need a focused assessment? <a href="#contact">Ping me with your target and scope</a>; I ship concise, reproducible PoCs and reports.</p>
+    </section>
+
+    <section id="contact">
+      <h2>$ ./contact --who trevor --where rwanda --now</h2>
+      <div class="grid" style="grid-template-columns:1.2fr .8fr">
+        <div class="card">
+          <p>Email: <a id="email" href="mailto:trevorhenry@example.com">trevorhenry@example.com</a>
+            <button class="btn" id="copyEmail" aria-label="Copy email">copy</button>
+          </p>
+          <p>GitHub: <a href="#" target="_blank" rel="noopener">github.com/h4k1ngb1ts</a></p>
+          <p>LinkedIn: <a href="#" target="_blank" rel="noopener">linkedin.com/in/trevor-henry</a></p>
+          <p>PGP: <code>0xDEADBEEF1337</code></p>
+        </div>
+        <div class="card">
+          <h3>Availability</h3>
+          <ul class="timeline">
+            <li class="item">Short‑term VAPT &amp; PoC builds</li>
+            <li class="item">Threat intel integrations (MISP/CAPE/Elastic)</li>
+            <li class="item">SOC dashboards &amp; detections</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="row" style="justify-content:space-between">
+        <span>© <span id="year"></span> Trevor Henry · Built with HTML/CSS/JS · Hosted on Render</span>
+        <span>Theme: <button class="btn" id="theme">toggle</button></span>
+      </div>
+    </div>
+  </footer>
+
   <script>
-    let pc = new RTCPeerConnection({
-      iceServers: [{urls: ['stun:stun.l.google.com:19302']}]
+    // —— Matrix rain background ——
+    (function(){
+      const c = document.getElementById('matrix');
+      const ctx = c.getContext('2d');
+      function resize(){ c.width = window.innerWidth; c.height = window.innerHeight; }
+      resize(); window.addEventListener('resize', resize);
+      const chars = 'アカサタナハマヤラワ0123456789abcdef';
+      const fontSize = 14;
+      let columns = Math.floor(c.width / fontSize);
+      let drops = Array(columns).fill(1);
+      function draw(){
+        ctx.fillStyle = 'rgba(11,15,16,0.15)';
+        ctx.fillRect(0,0,c.width,c.height);
+        ctx.fillStyle = '#00ff88';
+        ctx.font = fontSize+'px monospace';
+        for(let i=0;i<drops.length;i++){
+          const text = chars[Math.floor(Math.random()*chars.length)];
+          ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+          if(drops[i]*fontSize > c.height && Math.random()>0.975) drops[i]=0;
+          drops[i]++;
+        }
+      }
+      setInterval(draw, 50);
+    })();
+
+    // —— Smooth nav ——
+    document.querySelectorAll('[data-goto]').forEach(el=>{
+      el.addEventListener('click', e=>{
+        const to = document.querySelector(el.dataset.goto);
+        if(to) to.scrollIntoView({behavior:'smooth', block:'start'});
+      });
     });
 
-    pc.ondatachannel = event => {
-      const channel = event.channel;
-      channel.onmessage = msg => {
-        log("Received: " + msg.data);
-        if (msg.data === "ping") {
-          channel.send("pong");
-        } else if (msg.data === "GET / HTTP/1.1\r\n\r\n") {
-          channel.send("HTTP/1.1 200 OK\r\nContent-Length: 9\r\n\r\nIt works!");
-        }
-      };
-    };
-
-    async function start() {
-      let offer = JSON.parse(document.getElementById("sdp").value);
-      await pc.setRemoteDescription(offer);
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      log("Paste this answer into your script:");
-      log(JSON.stringify(pc.localDescription));
+    // —— Typewriter for terminal ——
+    const term = document.getElementById('term');
+    const script = [
+      '$ nmap -sS -sV target',
+      '> open ports: 443/tcp, 3478/udp (TURN)',
+      '$ python3 turn_exfil.py --help',
+      '> exfiltrate securely via WebRTC data channels',
+      '$ misp push --sightings --iocs from=cape,honey',
+      '> synced. detections updated in Elastic.',
+      '$ done.'
+    ];
+    let idx = 0;
+    function typeLine(){
+      if(idx >= script.length) return;
+      const line = script[idx++] + '\n';
+      let i = 0; const interval = setInterval(()=>{
+        term.innerHTML = term.innerHTML.replace('<span class="caret"></span>','');
+        term.textContent += line[i++];
+        term.innerHTML += '\n<span class="caret"></span>';
+        if(i >= line.length) clearInterval(interval);
+      }, 14);
+      setTimeout(typeLine, 900);
     }
+    setTimeout(typeLine, 1000);
 
-    function log(msg) {
-      document.getElementById("log").innerText += msg + "\n";
-    }
+    // —— Theme toggle ——
+    const themeBtn = document.getElementById('theme');
+    let alt = false;
+    themeBtn.addEventListener('click', ()=>{
+      alt = !alt;
+      document.documentElement.style.setProperty('--bg', alt ? '#00040a' : '#0b0f10');
+      document.documentElement.style.setProperty('--accent', alt ? '#00c7ff' : '#00ff88');
+      document.documentElement.style.setProperty('--accent-2', alt ? '#ff4d6d' : '#00c7ff');
+    });
+
+    // —— Year & copy email ——
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('copyEmail').addEventListener('click', ()=>{
+      const email = document.getElementById('email').textContent.trim();
+      navigator.clipboard.writeText(email).then(()=>{
+        const btn = document.getElementById('copyEmail');
+        btn.textContent = 'copied';
+        setTimeout(()=>btn.textContent='copy', 1200);
+      });
+    });
+
+    // —— Fake CV download ——
+    document.getElementById('downloadCV').addEventListener('click', (e)=>{
+      e.preventDefault();
+      const blob = new Blob([
+        '# Trevor Henry – CV\n',
+        'Role: Security Researcher / Pentester\n',
+        'Stack: Python, Bash, Elastic, MISP, CAPEv2, Nuclei, Nmap, Burp\n',
+        'Highlights: TURN Abuse PoCs, E‑Gov 2025, SOC Pipelines\n'
+      ], {type:'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'Trevor_Henry_CV.txt'; a.click();
+      URL.revokeObjectURL(url);
+    });
   </script>
 </body>
 </html>
