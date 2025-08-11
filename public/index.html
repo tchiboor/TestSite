@@ -364,5 +364,80 @@ $
       URL.revokeObjectURL(url);
     });
   </script>
+=======
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>TURN PoC: Browser as Offerer</title>
+</head>
+<body>
+  <h2>TURN PoC - Browser as Offerer</h2>
+  <p>1. Click "Create Offer".<br>
+     2. Paste the offer into receiver.py on AWS.<br>
+     3. Paste the answer from receiver.py back into the browser and click "Set Answer".<br>
+     4. Click "Send Message" to send data via TURN.</p>
+  <button onclick="createOffer()">Create Offer</button><br><br>
+  <textarea id="offer" cols="100" rows="10" placeholder="Copy this offer to receiver.py"></textarea><br>
+  <textarea id="answer" cols="100" rows="10" placeholder="Paste answer from receiver.py"></textarea><br>
+  <button onclick="setAnswer()">Set Answer</button><br><br>
+  <input id="msg" value="Hello from browser! TURN is an open relay."><br>
+  <button onclick="sendMessage()" id="sendBtn" disabled>Send Message</button>
+  <pre id="log"></pre>
+<script>
+let pc, channel;
+
+async function createOffer() {
+  document.getElementById('log').textContent = "Creating peer connection...";
+  pc = new RTCPeerConnection({
+    iceServers: [{
+      urls: 'turn:test.kmp.sn:3478?transport=udp',
+      username: '1754040322:@tchiboor:test.kmp.sn',
+      credential: 'y41rZbvm7t6Wk+BvPIKnrd2uAmY='
+    }],
+    iceTransportPolicy: 'relay'
+  });
+  channel = pc.createDataChannel("relay-test");
+  channel.onopen = () => {
+    document.getElementById('log').textContent += "\n[+] DataChannel open!";
+    document.getElementById('sendBtn').disabled = false;
+  };
+  channel.onclose = () => {
+    document.getElementById('log').textContent += "\n[-] DataChannel closed.";
+  };
+  channel.onmessage = e => {
+    document.getElementById('log').textContent += "\n[Browser RECEIVED]: " + e.data;
+  };
+
+  let offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  // Wait for ICE
+  await new Promise(resolve => {
+    if (pc.iceGatheringState === "complete") return resolve();
+    pc.onicegatheringstatechange = () => {
+      if (pc.iceGatheringState === "complete") resolve();
+    };
+  });
+
+  document.getElementById('offer').value = JSON.stringify(pc.localDescription);
+  document.getElementById('log').textContent += "\n[+] Offer created. Paste this to receiver.py.";
+}
+
+async function setAnswer() {
+  let answer = JSON.parse(document.getElementById('answer').value);
+  await pc.setRemoteDescription(answer);
+  document.getElementById('log').textContent += "\n[+] Answer set. You can send a message.";
+}
+
+function sendMessage() {
+  let msg = document.getElementById('msg').value;
+  if (channel && channel.readyState === "open") {
+    channel.send(msg);
+    document.getElementById('log').textContent += "\n[Sent] " + msg;
+  } else {
+    document.getElementById('log').textContent += "\n[-] Channel not open!";
+  }
+}
+</script>
 </body>
 </html>
