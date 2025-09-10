@@ -1,385 +1,256 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trevor Henry Chiboora | Security Engineer · VAPT · SOC</title>
-  <meta name="description" content="Portfolio of Trevor Henry Chiboora – security engineer focused on VAPT, SOC engineering (Elastic/MISP), malware triage, and research." />
-  <meta name="theme-color" content="#00ff88" />
-  <link rel="canonical" href="https://example.com/" />
-  <meta property="og:title" content="Trevor Henry Chiboora | Security Engineer · VAPT · SOC" />
-  <meta property="og:description" content="Security engineer focused on VAPT, SOC (Elastic/MISP), malware triage, and research. Open to roles in NJ/Remote." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="/og-image.png" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <title>Trevor Henry Chiboora — Security Engineer</title>
+  <meta name="description" content="Security Engineer focused on VAPT, SOC (Elastic/MISP), and automation. Newark, NJ · Open to Security Engineer, SOC Analyst, and VAPT roles." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🛡️</text></svg>">
   <style>
+    /* --- Design tokens --- */
     :root {
-      --bg:#0b0f10; --panel:#0f1416; --text:#d7ffef; --muted:#7de0bc;
-      --accent:#00ff88; --accent-2:#00c7ff; --danger:#ff4d6d; --ok:#68ff7a;
-      --edge:rgba(0,255,136,.16); --edge-2:rgba(255,255,255,.06);
-      --shadow:0 12px 30px rgba(0,255,136,.08);
+      --bg: #0b0e11;           /* dark */
+      --text: #e8f0ec;         /* near-white */
+      --muted: #a8b7b1;        /* soft gray */
+      --card: #101418;         /* panels */
+      --edge: #1b242a;         /* borders */
+      --brand: #59d49c;        /* accent */
+      --brand-2: #3aa3ff;      /* secondary */
+      --maxw: 960px;
+      --r: 14px;               /* radius */
+      --shadow: 0 10px 28px rgba(0,0,0,.25);
+      --gap: clamp(16px, 4vw, 28px);
     }
     @media (prefers-color-scheme: light) {
-      :root { --bg:#f9fffb; --panel:#ffffff; --text:#0a1511; --muted:#1d6f51; --edge:rgba(0,0,0,.08); }
+      :root {
+        --bg: #fbfdfc;
+        --text: #0e1714;
+        --muted: #4a5b55;
+        --card: #ffffff;
+        --edge: #e6eeea;
+        --shadow: 0 6px 20px rgba(0,0,0,.06);
+      }
     }
+
+    /* --- Base --- */
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;font:16px/1.6 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;color:var(--text);
-      background:radial-gradient(1200px 800px at 80% -10%, rgba(0,255,136,.08), transparent),
-                 radial-gradient(800px 600px at 10% 110%, rgba(0,199,255,.08), transparent), var(--bg);
-      overflow-x:hidden}
-    a{color:var(--accent);text-decoration:none}
-    a:hover,a:focus-visible{filter:brightness(118%)}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    #matrix{position:fixed;inset:0;z-index:-1;opacity:.18}
-    .container{max-width:1100px;margin:0 auto;padding:24px}
-    header{position:sticky;top:0;background:linear-gradient(180deg, rgba(11,15,16,.7), rgba(11,15,16,0));backdrop-filter:blur(8px);z-index:5;border-bottom:1px solid var(--edge)}
-    .brand{display:flex;align-items:center;gap:14px}
-    .logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:var(--shadow)}
-    .brand h1{font-size:18px;margin:0;letter-spacing:.6px}
-    nav{display:flex;gap:10px;flex-wrap:wrap}
-    .navwrap{display:flex;align-items:center;justify-content:space-between;gap:18px}
-    .chip{padding:8px 12px;border:1px solid var(--edge);border-radius:999px;color:var(--muted);cursor:pointer}
-    .chip:focus-visible{outline:2px solid var(--accent)}
-    .chip:hover{border-color:var(--accent);color:var(--text)}
-    main:focus-visible{outline:none}
+    body{margin:0;background:var(--bg);color:var(--text);
+      font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"}
+    img{max-width:100%;display:block}
+    a{color:var(--brand);text-decoration:none}
+    a:hover,a:focus-visible{text-decoration:underline}
+    .container{max-width:var(--maxw);margin:0 auto;padding:24px}
 
-    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;padding:44px 0}
+    /* --- Header --- */
+    header{position:sticky;top:0;background:color-mix(in oklch, var(--bg) 92%, transparent);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--edge);z-index:10}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:var(--shadow)}
+    .brand h1{font-size:16px;margin:0;font-weight:600;letter-spacing:.4px}
+    .links{display:flex;gap:10px;flex-wrap:wrap}
+    .chip{border:1px solid var(--edge);border-radius:999px;padding:8px 12px;background:color-mix(in oklch,var(--card) 80%, transparent);color:var(--muted)}
+    .chip:hover{color:var(--text)}
+    .menu{display:none}
+    @media (max-width:720px){
+      .links{display:none}
+      .menu{display:inline-flex;border:1px solid var(--edge);background:var(--card);border-radius:10px;padding:8px 10px}
+      nav[aria-expanded="true"] .links{display:flex;flex-direction:column;gap:8px;position:absolute;left:0;right:0;top:56px;background:var(--card);padding:10px 24px 16px;border-bottom:1px solid var(--edge)}
+    }
+
+    /* --- Hero --- */
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:var(--gap);align-items:center;padding:32px 0}
+    .title{font-size:clamp(28px, 4vw, 40px);line-height:1.15;margin:0 0 8px}
+    .subtitle{color:var(--muted);margin:0 0 14px}
+    .kpi{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
+    .badge{border:1px dashed var(--edge);border-radius:10px;padding:6px 10px;color:var(--muted);font-size:13px}
+    .panel{background:var(--card);border:1px solid var(--edge);border-radius:var(--r);box-shadow:var(--shadow)}
+    .terminal{padding:16px}
     @media (max-width:900px){.hero{grid-template-columns:1fr}}
 
-    .terminal{background:var(--panel);border:1px solid var(--edge);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
-    .term-top{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--edge-2);background:linear-gradient(0deg, rgba(255,255,255,.03), rgba(255,255,255,0))}
-    .dot{width:10px;height:10px;border-radius:50%}
-    .d-red{background:#ff5f56}.d-yellow{background:#ffbd2e}.d-green{background:#27c93f}
-    .term-body{padding:18px;color:#b9fdd1;min-height:160px;white-space:pre-line}
-
-    h1.title{font-size:42px;line-height:1.15;margin:0 0 10px;letter-spacing:.3px}
-    .subtitle{color:var(--muted);margin:0 0 18px}
-    .kpi{display:flex;gap:10px;flex-wrap:wrap}
-    .badge{padding:6px 10px;border:1px dashed var(--edge);border-radius:10px;font-size:13px;color:var(--muted)}
-
-    .grid{display:grid;gap:18px}
-    .grid.cards{grid-template-columns:repeat(auto-fit, minmax(260px,1fr))}
-    .card{background:rgba(255,255,255,.02);border:1px solid var(--edge);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
-    .card h3{margin:4px 0 6px;font-size:18px}
-    .card p{margin:0;color:#a8e9cc}
-    .card small{color:#89d9c0}
-
+    /* --- Sections --- */
     section{padding:28px 0}
-    section > h2{font-size:22px;color:var(--accent);margin:0 0 12px}
-    footer{border-top:1px solid var(--edge);margin-top:24px;padding:22px 0;color:#a8e9cc}
-    .btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--edge);border-radius:12px;padding:10px 14px;color:var(--text);background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0));cursor:pointer}
-    .btn:hover{border-color:var(--accent)}
-    .caret{display:inline-block;width:10px;background:var(--accent);height:1.1em;vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
-    @keyframes blink{50%{opacity:0}}
-    .timeline{border-left:2px dashed var(--edge);padding-left:14px}.timeline .item{margin-bottom:12px}
-    .callout{border:1px dashed rgba(0,255,136,.35);border-radius:16px;padding:12px}
-    .glow{box-shadow:0 0 0 1px var(--edge),0 0 18px rgba(0,255,136,.08) inset}
-    .row{display:flex;gap:12px;flex-wrap:wrap}
+    section>h2{font-size:18px;letter-spacing:.2px;color:var(--muted);margin:0 0 12px}
+    .grid{display:grid;gap:16px}
+    .grid.cards{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .card{padding:16px}
+    .card h3{margin:2px 0 6px;font-size:18px}
+    .card p{margin:0;color:color-mix(in oklch,var(--text) 86%, var(--muted))}
+    .meta{color:var(--muted);font-size:14px}
 
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      .caret{animation:none}
-    }
+    /* --- Footer --- */
+    footer{border-top:1px solid var(--edge);margin-top:24px}
+    .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--edge);border-radius:10px;padding:10px 14px;background:var(--card);color:var(--text)}
+    .btn:hover{border-color:var(--brand)}
+
+    /* print tidy */
+    @media print{header,footer,.btn{display:none} .container{max-width:100%;padding:0} body{background:#fff;color:#000}}
   </style>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Trevor Henry Chiboora",
-    "jobTitle": "Security Engineer / SOC Analyst",
-    "address": {"@type":"PostalAddress","addressLocality":"Newark","addressRegion":"NJ","addressCountry":"US"},
-    "email": "mailto:tchiboor@andrew.cmu.edu",
-    "telephone": "+1-201-616-1693",
-    "url": "https://example.com/",
-    "sameAs": [
-      "https://www.linkedin.com/in/tchiboor/",
-      "https://github.com/tchiboor"
-    ]
-  }
-  </script>
 </head>
 <body>
-  <canvas id="matrix" aria-hidden="true"></canvas>
   <a class="sr-only" href="#main">Skip to content</a>
-  <header role="banner">
-    <div class="container navwrap">
-      <div class="brand" aria-label="Brand">
+  <header>
+    <div class="container nav" role="navigation" aria-label="Primary" id="topnav" aria-expanded="false">
+      <div class="brand">
         <div class="logo" aria-hidden="true"></div>
-        <h1>trevor@chiboora:~/portfolio<span class="caret" style="height:1em"></span></h1>
+        <h1>Trevor Henry Chiboora</h1>
       </div>
-      <nav id="nav" aria-label="Primary">
-        <button class="chip" data-goto="#about" aria-controls="about">about</button>
-        <button class="chip" data-goto="#skills" aria-controls="skills">skills</button>
-        <button class="chip" data-goto="#experience" aria-controls="experience">experience</button>
-        <button class="chip" data-goto="#projects" aria-controls="projects">projects</button>
-        <button class="chip" data-goto="#education" aria-controls="education">education</button>
-        <button class="chip" data-goto="#certs" aria-controls="certs">certs</button>
-        <button class="chip" data-goto="#publications" aria-controls="publications">publications</button>
-        <button class="chip" data-goto="#contact" aria-controls="contact">contact</button>
-        <a class="chip" href="assets/Trevor_H_Chiboora_Resume.pdf" id="downloadCV" download>download-cv.pdf</a>
+      <nav class="links">
+        <a class="chip" href="#about">About</a>
+        <a class="chip" href="#skills">Skills</a>
+        <a class="chip" href="#experience">Experience</a>
+        <a class="chip" href="#projects">Projects</a>
+        <a class="chip" href="#education">Education</a>
+        <a class="chip" href="#certs">Certs</a>
+        <a class="chip" href="#contact">Contact</a>
+        <a class="chip" href="assets/Trevor_H_Chiboora_Resume.pdf" download>Resume (PDF)</a>
       </nav>
+      <button class="menu" aria-controls="topnav" aria-expanded="false" id="menubtn">Menu</button>
     </div>
   </header>
 
   <main id="main" class="container" tabindex="-1">
-    <section class="hero" aria-label="Intro">
+    <section class="hero">
       <div>
-        <p class="subtitle">Security Engineering · VAPT · SOC (Elastic / MISP)</p>
-        <h1 class="title">Hi, I'm Trevor Henry Chiboora.<br/>I break things to make them safer.</h1>
-        <div class="kpi" aria-label="Key skills">
-          <span class="badge">VAPT & Pentest</span>
-          <span class="badge">Elastic/MISP SOC</span>
+        <p class="subtitle">Security Engineering · VAPT · SOC (Elastic/MISP)</p>
+        <h2 class="title">I build and break systems to make them safer.</h2>
+        <p class="subtitle">Open to Security Engineer, SOC Analyst, and VAPT roles · Newark, NJ · Remote OK</p>
+        <div class="kpi">
+          <span class="badge">VAPT</span>
+          <span class="badge">SOC (Elastic/MISP)</span>
+          <span class="badge">Automation (Python/Bash)</span>
           <span class="badge">Mobile & Web Security</span>
-          <span class="badge">Python/Bash Automation</span>
-          <span class="badge">GRC & Audit</span>
         </div>
-        <div class="callout" style="margin-top:14px">Open to Security Engineer, SOC Analyst, and VAPT roles · Newark, NJ · Remote OK</div>
-        <div class="row" style="margin-top:14px">
-          <a class="btn" href="#experience" aria-label="Jump to experience">$ ls experience/</a>
-          <a class="btn" href="#contact" aria-label="Jump to contact">$ echo "let's talk" &gt; /dev/email</a>
-        </div>
-      </div>
-      <div class="terminal glow" aria-label="animated terminal">
-        <div class="term-top">
-          <span class="dot d-red" aria-hidden="true"></span>
-          <span class="dot d-yellow" aria-hidden="true"></span>
-          <span class="dot d-green" aria-hidden="true"></span>
-          <span style="margin-left:8px;color:#a8e9cc">/bin/intro.sh</span>
-        </div>
-        <pre class="term-body" id="term" aria-live="polite" aria-atomic="false">$ whoami
-&gt; trevor_h_chiboora
-$ cat mission.txt
-&gt; defend users, dismantle fraud, raise the bar.
-$ skills --top
-&gt; pentest | soc | dfir | python | bash
-$ 
-<span class="caret"></span></pre>
-      </div>
-    </section>
-
-    <section id="about" aria-labelledby="about-h">
-      <h2 id="about-h">$ cat about.md</h2>
-      <article class="card">
-        <p>
-          Based in Newark, NJ. Security researcher & engineer with 2+ years across security monitoring, DFIR/malware triage, scripting, vulnerability assessment, and penetration testing. Built a full attack‑and‑detect lab (Windows/Linux, AD, pfSense, Security Onion). Deployed a SOC using Elastic Security, MISP, and related integrations. Published research on African mobile/web security.
+        <p style="margin-top:14px">
+          <a class="btn" href="#projects">View Projects</a>
+          <a class="btn" href="assets/Trevor_H_Chiboora_Resume.pdf" download>Download Resume</a>
         </p>
-      </article>
+      </div>
+      <aside class="panel terminal" aria-label="Highlights">
+        <p class="meta">Highlights</p>
+        <ul>
+          <li>Deployed SOC with Elastic + MISP and custom pipelines.</li>
+          <li>Analyzed 200+ Android apps; published security research.</li>
+          <li>Built a full Attack & Detect lab (AD, pfSense, Security Onion).</li>
+        </ul>
+      </aside>
     </section>
 
-    <section id="skills" aria-labelledby="skills-h">
-      <h2 id="skills-h">$ cat skills.txt</h2>
-      <div class="grid cards">
-        <div class="card">
-          <h3>Operations</h3>
-          <p>SOC Monitoring, Incident Response, Malware Analysis, VAPT, Honeypots.</p>
-          <small>Blue ↔ Red collaboration.</small>
-        </div>
-        <div class="card">
-          <h3>Engineering</h3>
-          <p>Active Directory, pfSense, Proxmox, Firewalls, System Hardening.</p>
-          <small>On‑prem & lab builds.</small>
-        </div>
-        <div class="card">
-          <h3>Tooling</h3>
-          <p>Elastic Security, Security Onion, Suricata, Zeek, MISP, Burp Suite, Nmap, Nuclei.</p>
-          <small>Honeypots & malware triage.</small>
-        </div>
-        <div class="card">
-          <h3>Scripting</h3>
-          <p>Python, Bash — automation for scans, enrichment, and reporting.</p>
-          <small>Clean, reproducible scripts.</small>
-        </div>
+    <section id="about">
+      <h2>About</h2>
+      <div class="panel card">
+        <p>
+          Security researcher & engineer with 2+ years across security monitoring, DFIR/malware triage, scripting, vulnerability assessment, and penetration testing. I enjoy building clean automations and practical detections that reduce noise and catch real attacks.
+        </p>
       </div>
     </section>
 
-    <section id="experience" aria-labelledby="exp-h">
-      <h2 id="exp-h">$ ls experience/ -al</h2>
+    <section id="skills">
+      <h2>Skills</h2>
       <div class="grid cards">
-        <article class="card" aria-label="Upanzi Network / CyLab‑Africa">
+        <div class="panel card"><h3>Operations</h3><p>SOC Monitoring, Incident Response, Malware Analysis, VAPT, Honeypots</p></div>
+        <div class="panel card"><h3>Engineering</h3><p>Active Directory, pfSense, Proxmox, Firewalls, System Hardening</p></div>
+        <div class="panel card"><h3>Tooling</h3><p>Elastic Security, Security Onion, Suricata, Zeek, MISP, Burp Suite, Nmap, Nuclei</p></div>
+        <div class="panel card"><h3>Scripting</h3><p>Python & Bash for scan orchestration, enrichment, reporting</p></div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <h2>Experience</h2>
+      <div class="grid cards">
+        <article class="panel card">
           <h3>Research Associate — Upanzi Network / CyLab‑Africa</h3>
           <p>Automated security tests (Python/Bash). Deployed SOC (Elastic + MISP). Analyzed 200+ Android apps and published findings. Authored Africa‑focused security research.</p>
-          <small>Jan 2023 – Aug 2025</small>
+          <p class="meta">Jan 2023 – Aug 2025 · Kigali → Newark</p>
         </article>
-        <article class="card">
+        <article class="panel card">
           <h3>Teaching Assistant — Harare Institute of Technology</h3>
           <p>Prepared assignments & labs; supervised projects (Distinctions); coordinated exams.</p>
-          <small>Mar 2019 – Jun 2021</small>
+          <p class="meta">Mar 2019 – Jun 2021</p>
         </article>
-        <article class="card">
+        <article class="panel card">
           <h3>IT Officer — ZIMASCO Pvt. Ltd.</h3>
           <p>Tier II IT/security support for 500+ users; network troubleshooting; endpoint hardening; audits.</p>
-          <small>Sep 2017 – Jul 2018</small>
-        </article>
-        <article class="card">
-          <h3>IT Intern — ZIMASCO Pvt. Ltd.</h3>
-          <p>Help desk, incident logging/reporting; resolved network/hardware/software issues.</p>
-          <small>Aug 2015 – Aug 2016</small>
+          <p class="meta">Sep 2017 – Jul 2018</p>
         </article>
       </div>
     </section>
 
-    <section id="projects" aria-labelledby="proj-h">
-      <h2 id="proj-h">$ tree projects/</h2>
+    <section id="projects">
+      <h2>Projects</h2>
       <div class="grid cards">
-        <article class="card">
+        <article class="panel card">
           <h3>Honeynet Deployment (AfricaCERT)</h3>
           <p>Designed and deployed honeynets capturing real‑world attacker activity and producing actionable intel. Recognized by AfricaCERT.</p>
-          <small><a href="https://github.com/tchiboor" target="_blank" rel="noopener">code & notes →</a></small>
+          <p class="meta"><a href="https://github.com/tchiboor" target="_blank" rel="noopener">code & notes →</a></p>
         </article>
-        <article class="card">
+        <article class="panel card">
           <h3>Attack & Detect Home Lab</h3>
           <p>Windows/Linux servers, AD, pfSense, Security Onion, Elastic, Suricata, Zeek, and MISP to simulate attacks and practice IR & hardening.</p>
-          <small><a href="https://github.com/tchiboor" target="_blank" rel="noopener">architecture →</a></small>
+          <p class="meta"><a href="https://github.com/tchiboor" target="_blank" rel="noopener">architecture →</a></p>
         </article>
       </div>
     </section>
 
-    <section id="education" aria-labelledby="edu-h">
-      <h2 id="edu-h">$ cat education.md</h2>
+    <section id="education">
+      <h2>Education</h2>
       <div class="grid cards">
-        <article class="card">
-          <h3>MS in Information Technology (MSIT) — Carnegie Mellon University</h3>
-          <p>Specialization: Cybersecurity & Computer Networking.</p>
-          <small>Fall 2021 – Spring 2023</small>
-        </article>
-        <article class="card">
-          <h3>BTech in Information Technology — Harare Institute of Technology</h3>
-          <p>First‑Class Honours (Distinction).</p>
-          <small>Aug 2013 – Jun 2017</small>
-        </article>
+        <div class="panel card"><h3>MS in Information Technology (MSIT) — Carnegie Mellon University</h3><p>Cybersecurity & Computer Networking.</p><p class="meta">Fall 2021 – Spring 2023</p></div>
+        <div class="panel card"><h3>BTech in Information Technology — Harare Institute of Technology</h3><p>First‑Class Honours (Distinction).</p><p class="meta">Aug 2013 – Jun 2017</p></div>
       </div>
     </section>
 
-    <section id="certs" aria-labelledby="certs-h">
-      <h2 id="certs-h">$ cat certifications.txt</h2>
+    <section id="certs">
+      <h2>Certifications</h2>
       <div class="grid cards">
-        <div class="card"><h3>Cisco Certified CyberOps Associate</h3><p>Valid: Oct 2022 – Oct 2025</p></div>
-        <div class="card"><h3>ISC2 Certified in Cybersecurity (CC)</h3><p>Valid: Jul 2023 – Jul 2026</p></div>
-        <div class="card"><h3>CompTIA PenTest+</h3><p>Active</p></div>
+        <div class="panel card"><h3>Cisco Certified CyberOps Associate</h3><p class="meta">Valid: Oct 2022 – Oct 2025</p></div>
+        <div class="panel card"><h3>ISC2 Certified in Cybersecurity (CC)</h3><p class="meta">Valid: Jul 2023 – Jul 2026</p></div>
+        <div class="panel card"><h3>CompTIA PenTest+</h3><p class="meta">Active</p></div>
       </div>
     </section>
 
-    <section id="publications" aria-labelledby="pub-h">
-      <h2 id="pub-h">$ tail -n 3 publications.log</h2>
-      <div class="grid cards">
-        <article class="card"><h3><a href="#" rel="noopener">Evaluating Mobile Banking Application Security Posture Using OWASP MASVS</a></h3><p>ACM · 2023</p></article>
-        <article class="card"><h3><a href="#" rel="noopener">Security Challenges of Financial Mobile Apps in Africa</a></h3><p>Approov · 2023</p></article>
-        <article class="card"><h3><a href="#" rel="noopener">Potential Privacy Violation on Manual Contact Tracing: Rwanda Case Study</a></h3><p>IEEE · 2023</p></article>
-      </div>
-    </section>
-
-    <section id="contact" aria-labelledby="contact-h">
-      <h2 id="contact-h">$ ./contact --who trevor --where newark --now</h2>
-      <div class="grid" style="grid-template-columns:1.2fr .8fr">
-        <div class="card">
-          <p>Email: <a id="email" href="mailto:tchiboor@andrew.cmu.edu">tchiboor@andrew.cmu.edu</a>
-            <button class="btn" id="copyEmail" aria-label="Copy email">copy</button>
-          </p>
-          <p>Alt Email: <a href="mailto:chiboor[a]gmail.com" aria-label="Gmail obfuscated">chiboor[a]gmail.com</a></p>
+    <section id="contact">
+      <h2>Contact</h2>
+      <div class="grid" style="grid-template-columns:1.2fr .8fr; gap:16px">
+        <div class="panel card">
+          <p>Email: <a href="mailto:tchiboor@andrew.cmu.edu">tchiboor@andrew.cmu.edu</a> · Alt: <a href="mailto:chiboor[a]gmail.com">chiboor[a]gmail.com</a></p>
           <p>Phone: <a href="tel:+12016161693">+1 201 616 1693</a></p>
-          <p>GitHub: <a href="https://github.com/tchiboor" target="_blank" rel="noopener">github.com/tchiboor</a></p>
-          <p>LinkedIn: <a href="https://www.linkedin.com/in/tchiboor/" target="_blank" rel="noopener">linkedin.com/in/tchiboor</a></p>
-          <p>PGP: <code aria-label="PGP fingerprint">0xDEADBEEF1337</code></p>
-          <form class="row" id="contactForm" action="https://formspree.io/f/your-id" method="POST" style="margin-top:10px">
-            <input aria-label="Your email" class="btn" type="email" name="email" placeholder="your@email" required />
-            <input aria-label="Subject" class="btn" type="text" name="subject" placeholder="subject" required />
-            <input aria-label="Message" class="btn" type="text" name="message" placeholder="message" required />
-            <button class="btn" type="submit">send</button>
-          </form>
+          <p>GitHub: <a href="https://github.com/tchiboor" target="_blank" rel="noopener">github.com/tchiboor</a> · LinkedIn: <a href="https://www.linkedin.com/in/tchiboor/" target="_blank" rel="noopener">linkedin.com/in/tchiboor</a></p>
+          <p>Prefer email first. I respond within 24h.</p>
         </div>
-        <div class="card">
-          <h3>Availability</h3>
-          <ul class="timeline">
-            <li class="item">Short‑term VAPT &amp; PoC builds</li>
-            <li class="item">Threat intel integrations (MISP/CAPE/Elastic)</li>
-            <li class="item">SOC dashboards &amp; detections</li>
+        <aside class="panel card">
+          <h3 style="margin-top:0">Availability</h3>
+          <ul>
+            <li>Short‑term VAPT & PoC builds</li>
+            <li>Threat intel integrations (MISP/CAPE/Elastic)</li>
+            <li>SOC dashboards & detections</li>
           </ul>
-        </div>
+        </aside>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="container">
-      <div class="row" style="justify-content:space-between">
-        <span>© <span id="year"></span> Trevor Henry Chiboora · Built with HTML/CSS/JS · Hosted on Render</span>
-        <span>Theme: <button class="btn" id="theme" aria-pressed="false">toggle</button></span>
+    <div class="container row">
+      <small>© <span id="year"></span> Trevor Henry Chiboora</small>
+      <div class="row">
+        <a class="btn" href="#top">Back to top</a>
       </div>
     </div>
   </footer>
 
   <script>
-    // Matrix rain background — optimized & respects reduced motion
-    (function(){
-      const c=document.getElementById('matrix');
-      const x=c.getContext('2d');
-      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      function R(){c.width=innerWidth; c.height=innerHeight}
-      R(); addEventListener('resize', R);
-      const chars='アカサタナハマヤラワ0123456789abcdef';
-      const fs=14; let cols=Math.floor(c.width/fs); let drops=Array(cols).fill(1);
-      let last=0;
-      function frame(ts){
-        if(prefersReduced){ x.clearRect(0,0,c.width,c.height); return; }
-        if(ts-last<50){ requestAnimationFrame(frame); return; }
-        last=ts; cols=Math.floor(c.width/fs); if(drops.length!==cols) drops=Array(cols).fill(1);
-        x.fillStyle='rgba(11,15,16,0.15)'; x.fillRect(0,0,c.width,c.height);
-        x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#00ff88';
-        x.font=fs+'px monospace';
-        for(let i=0;i<drops.length;i++){
-          const t=chars[Math.floor(Math.random()*chars.length)];
-          x.fillText(t,i*fs,drops[i]*fs);
-          if(drops[i]*fs>c.height && Math.random()>0.975) drops[i]=0; drops[i]++;
-        }
-        requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-    })();
-
-    // Smooth nav + keyboard support
-    document.querySelectorAll('[data-goto]').forEach(el=>{
-      el.addEventListener('click',()=>{
-        const to=document.querySelector(el.dataset.goto);
-        if(to) to.scrollIntoView({behavior:'smooth',block:'start'});
-      });
-      el.addEventListener('keydown',(e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); el.click(); }});
+    // Mobile menu toggle
+    const nav = document.getElementById('topnav');
+    const btn = document.getElementById('menubtn');
+    btn?.addEventListener('click',()=>{
+      const ex = nav.getAttribute('aria-expanded') === 'true';
+      nav.setAttribute('aria-expanded', String(!ex));
+      btn.setAttribute('aria-expanded', String(!ex));
     });
-
-    // Typewriter (non-blocking)
-    const term=document.getElementById('term');
-    const script=['$ nmap -sS -sV target','> open ports: 443/tcp, 3478/udp (TURN)','$ python3 soc_pipeline.py --push-misp','> synced. detections updated in Elastic.','$ done.'];
-    let idx=0; function typeLine(){ if(idx>=script.length) return; const line=script[idx++]+'\n'; let i=0; const iv=setInterval(()=>{
-      term.innerHTML=term.innerHTML.replace('<span class="caret"></span>','');
-      term.textContent+=line[i++]||''; term.innerHTML+='\n<span class="caret"></span>';
-      if(i>=line.length) clearInterval(iv);
-    },14); setTimeout(typeLine,900) }
-    setTimeout(typeLine,1000);
-
-    // Theme toggle
-    const themeBtn=document.getElementById('theme'); let alt=false;
-    themeBtn.addEventListener('click',()=>{
-      alt=!alt; themeBtn.setAttribute('aria-pressed', String(alt));
-      document.documentElement.style.setProperty('--bg',alt?'#00040a':'#0b0f10');
-      document.documentElement.style.setProperty('--accent',alt?'#00c7ff':'#00ff88');
-      document.documentElement.style.setProperty('--accent-2',alt?'#ff4d6d':'#00c7ff');
-    });
-
-    // Year & copy email
-    document.getElementById('year').textContent=new Date().getFullYear();
-    document.getElementById('copyEmail').addEventListener('click',()=>{
-      const email=document.getElementById('email').textContent.trim();
-      navigator.clipboard.writeText(email).then(()=>{
-        const b=document.getElementById('copyEmail'); b.textContent='copied'; setTimeout(()=>b.textContent='copy',1200);
-      });
-    });
-
-    // Contact form basic UX
-    const form=document.getElementById('contactForm');
-    form?.addEventListener('submit',(e)=>{
-      const btn=form.querySelector('button[type="submit"]'); btn.disabled=true; btn.textContent='sending…';
-      setTimeout(()=>{ btn.disabled=false; btn.textContent='send'; }, 3000);
-    });
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
