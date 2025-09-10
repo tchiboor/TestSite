@@ -6,91 +6,76 @@
   <title>Trevor Henry Chiboora — Security Engineer</title>
   <meta name="description" content="Security Engineer focused on VAPT, SOC (Elastic/MISP), and automation. Newark, NJ · Open to Security Engineer, SOC Analyst, and VAPT roles." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🛡️</text></svg>">
+
   <style>
-    /* --- Design tokens --- */
-    :root {
-      --bg: #0b0e11;           /* dark */
-      --text: #e8f0ec;         /* near-white */
-      --muted: #a8b7b1;        /* soft gray */
-      --card: #101418;         /* panels */
-      --edge: #1b242a;         /* borders */
-      --brand: #59d49c;        /* accent */
-      --brand-2: #3aa3ff;      /* secondary */
-      --maxw: 960px;
-      --r: 14px;               /* radius */
-      --shadow: 0 10px 28px rgba(0,0,0,.25);
-      --gap: clamp(16px, 4vw, 28px);
+    :root{
+      --bg:#0b0e11; --text:#e8f0ec; --muted:#a8b7b1;
+      --card:#101418; --edge:#1b242a; --brand:#59d49c; --brand-2:#3aa3ff;
+      --maxw:960px; --r:14px; --shadow:0 10px 28px rgba(0,0,0,.25);
+      --gap:clamp(16px,4vw,28px);
     }
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #fbfdfc;
-        --text: #0e1714;
-        --muted: #4a5b55;
-        --card: #ffffff;
-        --edge: #e6eeea;
-        --shadow: 0 6px 20px rgba(0,0,0,.06);
-      }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#fbfdfc; --text:#0e1714; --muted:#4a5b55; --card:#ffffff; --edge:#e6eeea; --shadow:0 6px 20px rgba(0,0,0,.06); }
     }
 
-    /* --- Base --- */
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{margin:0;background:var(--bg);color:var(--text);
-      font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"}
+      font:16px/1.6 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
     img{max-width:100%;display:block}
     a{color:var(--brand);text-decoration:none}
     a:hover,a:focus-visible{text-decoration:underline}
-    .container{max-width:var(--maxw);margin:0 auto;padding:24px}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 16px}
 
-    /* --- Header --- */
-    header{position:sticky;top:0;background:color-mix(in oklch, var(--bg) 92%, transparent);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--edge);z-index:10}
-    .nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:var(--shadow)}
-    .brand h1{font-size:16px;margin:0;font-weight:600;letter-spacing:.4px}
-    .links{display:flex;gap:10px;flex-wrap:wrap}
-    .chip{border:1px solid var(--edge);border-radius:999px;padding:8px 12px;background:color-mix(in oklch,var(--card) 80%, transparent);color:var(--muted)}
+    /* Static, slim header */
+    header{position:static;background:var(--bg);border-bottom:1px solid var(--edge);z-index:10}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0}
+    .brand{display:flex;align-items:center;gap:8px}
+    .logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:var(--shadow)}
+    .brand h1{font-size:15px;margin:0;font-weight:600}
+    .links{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{border:1px solid var(--edge);border-radius:999px;padding:6px 10px;background:var(--card);color:var(--muted);font-size:14px}
     .chip:hover{color:var(--text)}
     .menu{display:none}
     @media (max-width:720px){
       .links{display:none}
-      .menu{display:inline-flex;border:1px solid var(--edge);background:var(--card);border-radius:10px;padding:8px 10px}
-      nav[aria-expanded="true"] .links{display:flex;flex-direction:column;gap:8px;position:absolute;left:0;right:0;top:56px;background:var(--card);padding:10px 24px 16px;border-bottom:1px solid var(--edge)}
+      .menu{display:inline-flex;border:1px solid var(--edge);background:var(--card);border-radius:8px;padding:6px 8px;font-size:14px}
+      #topnav[aria-expanded="true"] .links{
+        display:flex;flex-direction:column;gap:6px;position:absolute;left:0;right:0;top:44px;
+        background:var(--card);padding:8px 16px;border-bottom:1px solid var(--edge)
+      }
     }
 
-    /* --- Hero --- */
-    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:var(--gap);align-items:center;padding:32px 0}
-    .title{font-size:clamp(28px, 4vw, 40px);line-height:1.15;margin:0 0 8px}
-    .subtitle{color:var(--muted);margin:0 0 14px}
-    .kpi{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
-    .badge{border:1px dashed var(--edge);border-radius:10px;padding:6px 10px;color:var(--muted);font-size:13px}
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:var(--gap);align-items:center;padding:24px 0}
+    .title{font-size:clamp(24px,4vw,36px);line-height:1.2;margin:0 0 8px}
+    .subtitle{color:var(--muted);margin:0 0 12px}
+    .kpi{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 0}
+    .badge{border:1px dashed var(--edge);border-radius:8px;padding:4px 8px;color:var(--muted);font-size:13px}
     .panel{background:var(--card);border:1px solid var(--edge);border-radius:var(--r);box-shadow:var(--shadow)}
-    .terminal{padding:16px}
+    .terminal{padding:14px}
     @media (max-width:900px){.hero{grid-template-columns:1fr}}
 
-    /* --- Sections --- */
-    section{padding:28px 0}
-    section>h2{font-size:18px;letter-spacing:.2px;color:var(--muted);margin:0 0 12px}
-    .grid{display:grid;gap:16px}
-    .grid.cards{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-    .card{padding:16px}
-    .card h3{margin:2px 0 6px;font-size:18px}
-    .card p{margin:0;color:color-mix(in oklch,var(--text) 86%, var(--muted))}
-    .meta{color:var(--muted);font-size:14px}
+    /* Sections & cards */
+    section{padding:24px 0}
+    section>h2{font-size:18px;color:var(--muted);margin:0 0 12px}
+    .grid{display:grid;gap:14px}
+    .grid.cards{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    .card{padding:14px}
+    .card h3{margin:2px 0 6px;font-size:17px}
+    .card p{margin:0;color:var(--muted)}
+    .meta{color:var(--muted);font-size:13px}
 
-    /* --- Footer --- */
-    footer{border-top:1px solid var(--edge);margin-top:24px}
+    /* Footer & buttons */
+    footer{border-top:1px solid var(--edge);margin-top:20px;padding:10px 0}
     .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-    .btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--edge);border-radius:10px;padding:10px 14px;background:var(--card);color:var(--text)}
+    .btn{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--edge);border-radius:8px;padding:6px 10px;background:var(--card);color:var(--text);font-size:14px}
     .btn:hover{border-color:var(--brand)}
-
-    /* print tidy */
-    @media print{header,footer,.btn{display:none} .container{max-width:100%;padding:0} body{background:#fff;color:#000}}
   </style>
 </head>
+
 <body>
-  <a class="sr-only" href="#main">Skip to content</a>
-  <header>
+  <!-- anchor for back-to-top -->
+  <header id="top">
     <div class="container nav" role="navigation" aria-label="Primary" id="topnav" aria-expanded="false">
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
@@ -104,7 +89,6 @@
         <a class="chip" href="#education">Education</a>
         <a class="chip" href="#certs">Certs</a>
         <a class="chip" href="#contact">Contact</a>
-        <a class="chip" href="assets/Trevor_H_Chiboora_Resume.pdf" download>Resume (PDF)</a>
       </nav>
       <button class="menu" aria-controls="topnav" aria-expanded="false" id="menubtn">Menu</button>
     </div>
@@ -113,8 +97,8 @@
   <main id="main" class="container" tabindex="-1">
     <section class="hero">
       <div>
-        <p class="subtitle">Security Engineering · VAPT · SOC (Elastic/MISP)</p>
-        <h2 class="title">I build and break systems to make them safer.</h2>
+        <p class="subtitle">Security Engineering · VAPT · SOC Analyst · GRC</p>
+        <h2 class="title">Security Engineer focused on building resilient systems and detecting threats.</h2>
         <p class="subtitle">Open to Security Engineer, SOC Analyst, and VAPT roles · Newark, NJ · Remote OK</p>
         <div class="kpi">
           <span class="badge">VAPT</span>
@@ -160,8 +144,8 @@
       <h2>Experience</h2>
       <div class="grid cards">
         <article class="panel card">
-          <h3>Research Associate — Upanzi Network / CyLab‑Africa</h3>
-          <p>Automated security tests (Python/Bash). Deployed SOC (Elastic + MISP). Analyzed 200+ Android apps and published findings. Authored Africa‑focused security research.</p>
+          <h3>Research Associate — Upanzi Network / CyLab-Africa</h3>
+          <p>Automated security tests (Python/Bash). Deployed SOC (Elastic + MISP). Analyzed 200+ Android apps and published findings. Authored Africa-focused security research.</p>
           <p class="meta">Jan 2023 – Aug 2025 · Kigali → Newark</p>
         </article>
         <article class="panel card">
@@ -182,7 +166,7 @@
       <div class="grid cards">
         <article class="panel card">
           <h3>Honeynet Deployment (AfricaCERT)</h3>
-          <p>Designed and deployed honeynets capturing real‑world attacker activity and producing actionable intel. Recognized by AfricaCERT.</p>
+          <p>Designed and deployed honeynets capturing real-world attacker activity and producing actionable intel. Recognized by AfricaCERT.</p>
           <p class="meta"><a href="https://github.com/tchiboor" target="_blank" rel="noopener">code & notes →</a></p>
         </article>
         <article class="panel card">
@@ -197,7 +181,7 @@
       <h2>Education</h2>
       <div class="grid cards">
         <div class="panel card"><h3>MS in Information Technology (MSIT) — Carnegie Mellon University</h3><p>Cybersecurity & Computer Networking.</p><p class="meta">Fall 2021 – Spring 2023</p></div>
-        <div class="panel card"><h3>BTech in Information Technology — Harare Institute of Technology</h3><p>First‑Class Honours (Distinction).</p><p class="meta">Aug 2013 – Jun 2017</p></div>
+        <div class="panel card"><h3>BTech in Information Technology — Harare Institute of Technology</h3><p>First-Class Honours (Distinction).</p><p class="meta">Aug 2013 – Jun 2017</p></div>
       </div>
     </section>
 
@@ -214,15 +198,15 @@
       <h2>Contact</h2>
       <div class="grid" style="grid-template-columns:1.2fr .8fr; gap:16px">
         <div class="panel card">
-          <p>Email: <a href="mailto:tchiboor@andrew.cmu.edu">tchiboor@andrew.cmu.edu</a> · Alt: <a href="mailto:chiboor[a]gmail.com">chiboor[a]gmail.com</a></p>
-          <p>Phone: <a href="tel:+12016161693">+1 201 616 1693</a></p>
+          <p>Email: <a href="mailto:chiboorat@gmail.com">chiboorat@gmail.com</a> · Alt: <a href="mailto:thc4@njit.edu">thc4@njit.edu</a></p>
+          <!-- <p>Phone: <a href="tel:+12016161693">+1 201 616 1693</a></p> -->
           <p>GitHub: <a href="https://github.com/tchiboor" target="_blank" rel="noopener">github.com/tchiboor</a> · LinkedIn: <a href="https://www.linkedin.com/in/tchiboor/" target="_blank" rel="noopener">linkedin.com/in/tchiboor</a></p>
           <p>Prefer email first. I respond within 24h.</p>
         </div>
         <aside class="panel card">
           <h3 style="margin-top:0">Availability</h3>
           <ul>
-            <li>Short‑term VAPT & PoC builds</li>
+            <li>Short-term VAPT & PoC builds</li>
             <li>Threat intel integrations (MISP/CAPE/Elastic)</li>
             <li>SOC dashboards & detections</li>
           </ul>
@@ -234,22 +218,21 @@
   <footer>
     <div class="container row">
       <small>© <span id="year"></span> Trevor Henry Chiboora</small>
-      <div class="row">
-        <a class="btn" href="#top">Back to top</a>
-      </div>
+      <div class="row"><a class="btn" href="#top">Back to top</a></div>
     </div>
   </footer>
 
   <script>
-    // Mobile menu toggle
+    // Mobile menu toggle (small screens)
     const nav = document.getElementById('topnav');
     const btn = document.getElementById('menubtn');
-    btn?.addEventListener('click',()=>{
+    btn?.addEventListener('click', () => {
       const ex = nav.getAttribute('aria-expanded') === 'true';
       nav.setAttribute('aria-expanded', String(!ex));
       btn.setAttribute('aria-expanded', String(!ex));
     });
-    // Year
+
+    // Year in footer
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
